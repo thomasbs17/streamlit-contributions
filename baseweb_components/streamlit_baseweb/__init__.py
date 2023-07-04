@@ -1,10 +1,10 @@
 import os
-from typing import Literal
+from typing import Literal, List, Dict, Optional
 
 import streamlit as st
 import streamlit.components.v1 as components
 
-_RELEASE = True
+_RELEASE = False
 
 __title__ = "Baseweb UI"
 __author__ = "Thomas Bouamoud"
@@ -13,10 +13,15 @@ if not _RELEASE:
     _base_web_modal = components.declare_component(
         "base_web_modal", url="http://localhost:3000",
     )
+    _base_web_navigation_bar = components.declare_component(
+        "base_web_navigation_bar", url="http://localhost:3000",
+    )
 else:
     parent_dir = os.path.dirname(os.path.abspath(__file__))
     modal_dir = os.path.join(parent_dir, "modal/build")
     _base_web_modal = components.declare_component("base_web_modal", path=modal_dir)
+    modal_dir = os.path.join(parent_dir, "navbar/build")
+    _base_web_navbar = components.declare_component("base_web_modal", path=modal_dir)
 
 
 def base_web_modal(
@@ -81,3 +86,57 @@ def base_web_modal(
     }    
         """
     st.sidebar.markdown(f"<style>{modal_css}</style>", unsafe_allow_html=True)
+
+
+def base_web_navigation_bar(
+    title: str,
+    main_items: List[Dict],
+    user_items: List[Dict],
+    user_name: Optional[str] = None,
+    user_name_subtitle: Optional[str] = None,
+    user_image_url: Optional[str] = None,
+    key=None,
+):
+    """
+
+    Parameters
+    ----------
+    title
+    main_items
+    user_items
+    username
+    username_subtitle
+    user_image_url
+
+    Returns
+    -------
+
+    """
+    _base_web_navigation_bar(
+        title=title,
+        main_items=main_items,
+        user_items=user_items,
+        user_name=user_name,
+        user_name_subtitle=user_name_subtitle,
+        user_image_url=user_image_url,
+        key=key,
+        default=0,
+    )
+    navbar_css = """
+    div[data-stale="false"]>iframe[title="streamlit_baseweb.base_web_navigation_bar"] {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
+
+    [data-testid="stHeader"] {
+        height: 1px;
+        background-color: transparent
+    }
+
+    [data-testid="stHeader"] * {
+        right: 0;
+    }
+    """
+    st.markdown(f"<style>{navbar_css}</style>", unsafe_allow_html=True)
