@@ -1,6 +1,6 @@
 import os
 import base64
-from typing import TypedDict, List, NotRequired
+from typing import TypedDict, List, Union
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -30,8 +30,8 @@ class Item(TypedDict):
     title: str
     text: str
     img: str
-    link: NotRequired[str | None]
-    interval: NotRequired[int | None]
+    link: Union[str, None]
+    interval: Union[int, None]
 
 
 def get_image_data_url(file_path: str) -> str:
