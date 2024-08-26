@@ -1,9 +1,13 @@
 name: Build and Deploy
 
 on:
-  push:
-    branches:
-      - master
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Specify the version bump type (patch, minor, major)'
+        required: true
+        default: 'patch'
+        type: string
 
 jobs:
   bump_version:
@@ -18,25 +22,16 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Determine branch type
-        id: branch_check
-        run: |
-          BRANCH_NAME="${{ github.head_ref }}"
-          if [[ "$BRANCH_NAME" == *"cicd"* ]]; then
-            echo "VERSION_BUMP=patch" >> $GITHUB_ENV
-          elif [[ "$BRANCH_NAME" == *"minor"* ]]; then
-            echo "VERSION_BUMP=minor" >> $GITHUB_ENV
-          elif [[ "$BRANCH_NAME" == *"major"* ]]; then
-            echo "VERSION_BUMP=major" >> $GITHUB_ENV
-          else
-            echo "Branch name must contain 'patch', 'minor', or 'major'."
-            exit 1
-          fi
-
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install bump2version
+
+      - name: Determine version bump
+        id: version_check
+        run: |
+          VERSION_BUMP="${{ github.event.inputs.version_bump }}"
+          echo "VERSION_BUMP=${VERSION_BUMP}" >> $GITHUB_ENV
 
       - name: Bump version
         run: |
