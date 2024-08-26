@@ -24,15 +24,6 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install NPM
-        run: npm install --force
-        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install bumpver
-
       - name: Determine branch type
         id: branch_check
         run: |
@@ -46,7 +37,16 @@ jobs:
           else
             echo "Branch name must contain 'patch', 'minor', or 'major'."
             exit 1
-          fi
+          fi          
+
+      - name: Install NPM
+        run: npm install --force
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bumpver
 
       - name: Bump version in package.json
         run: |
