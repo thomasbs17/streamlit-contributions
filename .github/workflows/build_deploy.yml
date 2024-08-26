@@ -33,14 +33,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install bumpver
 
-      - name: Determine version bump
-        id: get_version
-        run: echo "VERSION_BUMP=${{ github.event.inputs.version_bump }}" >> $GITHUB_ENV
+      - name: Determine branch type
+        id: branch_check
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ "$BRANCH_NAME" == *"patch"* ]]; then
+            echo "VERSION_BUMP=patch" >> $GITHUB_ENV
+          elif [[ "$BRANCH_NAME" == *"minor"* ]]; then
+            echo "VERSION_BUMP=minor" >> $GITHUB_ENV
+          elif [[ "$BRANCH_NAME" == *"major"* ]]; then
+            echo "VERSION_BUMP=major" >> $GITHUB_ENV
+          else
+            echo "Branch name must contain 'patch', 'minor', or 'major'."
+            exit 1
+          fi
 
       - name: Bump version in package.json
         run: |
           npm version $VERSION_BUMP --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
-          bumpver update --increment $VERSION_BUMP
+          bumpver $VERSION_BUMP
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           git push origin cicd
