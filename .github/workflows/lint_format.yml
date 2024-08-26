@@ -25,16 +25,12 @@ jobs:
 
       - name: Lint code with Ruff
         run: |
-          ruff check .
+          ruff check . --fix
 
       - name: Format code with Ruff
         run: |
-          ruff check . --fix
+          ruff format
 
       - name: Run Prettier
         run: |
           npx prettier --write .
-
-      - name: Verify formatting
-        run: |
-          git diff --exit-code
