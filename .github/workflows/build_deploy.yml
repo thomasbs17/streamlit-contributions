@@ -10,6 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
       - name: Check if PR is approved
         id: check_approval
         env:
@@ -20,15 +28,7 @@ jobs:
           if [ -z "$PR_REVIEW_STATUS" ]; then
             echo "The pull request is not approved. Exiting."
             exit 1
-          fi
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
+          fi          
 
       - name: Determine branch type
         id: branch_check
