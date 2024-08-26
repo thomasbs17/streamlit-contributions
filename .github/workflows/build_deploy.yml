@@ -28,7 +28,7 @@ jobs:
         id: branch_check
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          if [[ "$BRANCH_NAME" == *"patch"* ]]; then
+          if [[ "$BRANCH_NAME" == *"cicd"* ]]; then
             echo "VERSION_BUMP=patch" >> $GITHUB_ENV
           elif [[ "$BRANCH_NAME" == *"minor"* ]]; then
             echo "VERSION_BUMP=minor" >> $GITHUB_ENV
