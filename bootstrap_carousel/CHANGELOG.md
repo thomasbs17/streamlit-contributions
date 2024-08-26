@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## [1.1.2] - 2024-08-26
+### Features
+- compatibility with Python 3.8
+
+## [1.1.1] - 2024-08-26
+### Features
+- added better CI/CD workflows
+
 ## [1.1.0] - 2024-07-14
 ### Features
 - support for local images
