@@ -58,6 +58,10 @@ jobs:
           git push origin cicd
 
   build_and_deploy:
+
+    needs:
+      - bump_version
+
     runs-on: ubuntu-latest
 
     environment:
