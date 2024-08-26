@@ -1,13 +1,6 @@
 name: Build and Deploy
 
 on:
-  workflow_call:
-    inputs:
-      version_bump:
-        description: 'Version bump type (patch, minor, major)'
-        required: true
-        type: string
-
   pull_request:
     branches:
       - '**'  # Triggers on any branch
@@ -15,6 +8,14 @@ on:
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/streamlit-carousel/
+
+    permissions:
+      id-token: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +68,8 @@ jobs:
 
       - name: Build with npm
         run: |
-          npm run build --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
+          cd ./bootstrap_carousel/streamlit_carousel/carousel/
+          npm run build
 
       - name: Install build tools
         run: |
@@ -79,10 +81,17 @@ jobs:
           cd bootstrap_carousel
           python -m build
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          cd bootstrap_carousel
-          python -m twine upload dist/*
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: upload-distributions
+          path: bootstrap_carousel/dist/
+
+      - name: Download all the dists
+        uses: actions/download-artifact@v3
+        with:
+          name: retrieve-distributions
+          path: bootstrap_carousel/dist/
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
