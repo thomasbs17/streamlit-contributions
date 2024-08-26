@@ -74,8 +74,10 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install React Scripts
-        run: npm install react-scripts --force
+      - name: Install NPM dependencies
+        run: npm install --force
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+
 
       - name: Build with npm
         run: |
