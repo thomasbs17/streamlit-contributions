@@ -1,15 +1,25 @@
 name: Build and Deploy
 
 on:
-  push:
-    branches:
-      - master
+  pull_request:
+    types: [closed]
 
 jobs:
   bump_version:
+    if: ${{ github.event.pull_request.merged == true }}  # Check if PR is merged
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check if PR is approved
+        id: check_approval
+        run: |
+          # Use the GitHub CLI to get PR reviews
+          PR_REVIEW_STATUS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews -q '.reviews[].state' | grep 'APPROVED')
+          if [ -z "$PR_REVIEW_STATUS" ]; then
+            echo "The pull request is not approved. Exiting."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -22,11 +32,11 @@ jobs:
         id: branch_check
         run: |
           BRANCH_NAME="${{ github.head_ref }}"
-          if [[ "$BRANCH_NAME" == *"cicd"* ]]; then
+          if [[ "SOURCE_BRANCH" == *"patch"* ]]; then
             echo "VERSION_BUMP=patch" >> $GITHUB_ENV
-          elif [[ "$BRANCH_NAME" == *"minor"* ]]; then
+          elif [[ "SOURCE_BRANCH" == *"minor"* ]]; then
             echo "VERSION_BUMP=minor" >> $GITHUB_ENV
-          elif [[ "$BRANCH_NAME" == *"major"* ]]; then
+          elif [[ "SOURCE_BRANCH" == *"major"* ]]; then
             echo "VERSION_BUMP=major" >> $GITHUB_ENV
           else
             echo "Branch name must contain 'patch', 'minor', or 'major'."
