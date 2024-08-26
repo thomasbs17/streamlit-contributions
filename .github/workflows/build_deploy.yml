@@ -85,7 +85,7 @@ jobs:
           pip install build twine
 
       - name: Pull Latest Code
-        uses: git pull origin cicd
+        run: git pull origin cicd
 
       - name: Build distribution files
         run: |
