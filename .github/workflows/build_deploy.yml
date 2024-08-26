@@ -47,10 +47,9 @@ jobs:
           git config --global user.email "thomasbs17@yahoo.fr"
           git config --global user.name "Thomas Bouamoud"
           
-          npm version $VERSION_BUMP --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
+          npm version $VERSION_BUMP --prefix .\bootstrap_carousel\streamlit_carousel\carousel\
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
-          
           
           cd bootstrap_carousel
           bumpversion $VERSION_BUMP --verbose
@@ -60,18 +59,11 @@ jobs:
           git rebase origin/cicd
           git push origin HEAD:cicd
 
-  build_and_deploy:
+  build:
     needs:
       - bump_version
 
     runs-on: ubuntu-latest
-
-    environment:
-      name: pypi
-      url: https://pypi.org/project/streamlit-carousel/
-
-    permissions:
-      id-token: write
 
     steps:
       - name: Checkout code
@@ -81,6 +73,10 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+
+      - name: Install NPM
+        run: npm install --force
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Build with npm
         run: |
@@ -102,6 +98,28 @@ jobs:
         with:
           name: bootstrap_carousel
           path: bootstrap_carousel/dist/
+
+  deploy:
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/streamlit-carousel/
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Download all the dists
         uses: actions/download-artifact@v3
