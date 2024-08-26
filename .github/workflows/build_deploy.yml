@@ -1,15 +1,16 @@
 name: Build and Deploy
 
 on:
-  pull_request:
-    branches:
-      - '**'  # Triggers on any branch
-
-  workflow_dispatch:
+  workflow_call:
     inputs:
       version_bump:
         description: 'Version bump type (patch, minor, major)'
         required: true
+        type: string
+
+  pull_request:
+    branches:
+      - '**'  # Triggers on any branch
 
 jobs:
   build_and_deploy:
