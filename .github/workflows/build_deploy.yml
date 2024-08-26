@@ -47,7 +47,7 @@ jobs:
           bumpversion $VERSION_BUMP --verbose
           
           cd ..
-          git push -f origin HEAD:cicd
+          git push -f origin HEAD:master
 
   build:
     needs:
