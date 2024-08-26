@@ -6,22 +6,15 @@ on:
       - '**'  # Triggers on any branch
 
 jobs:
-  build_and_deploy:
+  bump_version:
     runs-on: ubuntu-latest
-
-    environment:
-      name: pypi
-      url: https://pypi.org/project/streamlit-carousel/
-
-    permissions:
-      id-token: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.x'
 
@@ -52,17 +45,40 @@ jobs:
       - name: Bump version
         run: |
           cd bootstrap_carousel
-          
+
           git config --global user.email "thomasbs17@yahoo.fr"
           git config --global user.name "Thomas Bouamoud"
-          
+
           bumpversion $VERSION_BUMP --verbose
-          
+
           npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel/
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
-          
+
           git push origin cicd
+
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/streamlit-carousel/
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install NPM
+        run: npm install --force
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Build with npm
         run: |
