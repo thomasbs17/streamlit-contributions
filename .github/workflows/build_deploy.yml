@@ -76,6 +76,7 @@ jobs:
 
       - name: Build distribution files
         run: |
+          cd bootstrap_carousel
           python -m build
 
       - name: Publish to PyPI
@@ -83,4 +84,5 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
+          cd bootstrap_carousel
           python -m twine upload dist/*
