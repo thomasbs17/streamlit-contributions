@@ -11,6 +11,7 @@ on:
 
 jobs:
   bump_version:
+    if: ${{ github.event.pull_request.merged == true }}  # Check if PR is merged
     runs-on: ubuntu-latest
 
     steps:
