@@ -33,9 +33,9 @@ jobs:
             exit 1
           fi          
 
-      - name: Install NPM dependencies
-        run: npm install --force
-        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+#      - name: Install NPM dependencies
+#        run: npm install --force
+#        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Install Python dependencies
         run: |
@@ -47,86 +47,84 @@ jobs:
           git config --global user.email "thomasbs17@yahoo.fr"
           git config --global user.name "Thomas Bouamoud"
           
-          cd bootstrap_carousel/streamlit_carousel/carousel
-          npm version $VERSION_BUMP
+          cd bootstrap_carousel
+          
+          npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           
-          cd ../..
           bumpversion $VERSION_BUMP --verbose
           
-          git fetch origin cicd
-          git rebase origin/cicd
-          git push origin HEAD:cicd
+          git push
 
-  build:
-    needs:
-      - bump_version
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Install NPM dependencies
-        run: npm install --force
-        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
-
-
-      - name: Build with npm
-        run: |
-          cd ./bootstrap_carousel/streamlit_carousel/carousel/
-          npm run build
-
-      - name: Install build tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install build twine
-
-      - name: Build distribution files
-        run: |
-          cd bootstrap_carousel
-          python -m build
-
-      - name: Store the distribution packages
-        uses: actions/upload-artifact@v3
-        with:
-          name: bootstrap_carousel
-          path: bootstrap_carousel/dist/
-
-  deploy:
-    needs:
-      - build
-
-    runs-on: ubuntu-latest
-
-    environment:
-      name: pypi
-      url: https://pypi.org/project/streamlit-carousel/
-
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Download all the dists
-        uses: actions/download-artifact@v3
-        with:
-          name: bootstrap_carousel
-          path: dist/
-
-      - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+#  build:
+#    needs:
+#      - bump_version
+#
+#    runs-on: ubuntu-latest
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: '3.x'
+#
+#      - name: Install NPM dependencies
+#        run: npm install --force
+#        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+#
+#
+#      - name: Build with npm
+#        run: |
+#          cd ./bootstrap_carousel/streamlit_carousel/carousel/
+#          npm run build
+#
+#      - name: Install build tools
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install build twine
+#
+#      - name: Build distribution files
+#        run: |
+#          cd bootstrap_carousel
+#          python -m build
+#
+#      - name: Store the distribution packages
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: bootstrap_carousel
+#          path: bootstrap_carousel/dist/
+#
+#  deploy:
+#    needs:
+#      - build
+#
+#    runs-on: ubuntu-latest
+#
+#    environment:
+#      name: pypi
+#      url: https://pypi.org/project/streamlit-carousel/
+#
+#    permissions:
+#      id-token: write
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v5
+#        with:
+#          python-version: '3.x'
+#
+#      - name: Download all the dists
+#        uses: actions/download-artifact@v3
+#        with:
+#          name: bootstrap_carousel
+#          path: dist/
+#
+#      - name: Publish distribution 📦 to PyPI
+#        uses: pypa/gh-action-pypi-publish@release/v1
