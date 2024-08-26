@@ -51,8 +51,10 @@ jobs:
       - name: Bump version in package.json
         run: |
           cd bootstrap_carousel
-          npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel/
           bumpversion $VERSION_BUMP --verbose
+          git add .
+          git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
+          npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel/
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           git push origin cicd
