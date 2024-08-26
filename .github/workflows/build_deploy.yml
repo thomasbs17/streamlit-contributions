@@ -54,7 +54,6 @@ jobs:
           
           cd ../..
           bumpversion $VERSION_BUMP --verbose
-          cd ..
           
           git fetch origin cicd
           git rebase origin/cicd
@@ -76,7 +75,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install NPM
-        run: npm install --force
+        run: npm install react-scripts
         working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Build with npm
@@ -126,7 +125,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: bootstrap_carousel
-          path: bootstrap_carousel/dist/
+          path: dist/
 
       - name: Publish distribution 📦 to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
