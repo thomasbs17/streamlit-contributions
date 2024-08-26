@@ -27,7 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install bumpver
-          npm install
+          npm install --prefix .\bootstrap_carousel\streamlit_carousel\carousel\
 
       - name: Determine version bump
         id: get_version
