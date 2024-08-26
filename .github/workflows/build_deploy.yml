@@ -25,7 +25,7 @@ jobs:
 
       - name: Install NPM
         run: npm install
-        working-directory: .\bootstrap_carousel\streamlit_carousel\carousel\
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Install Python dependencies
         run: |
