@@ -1,0 +1,131 @@
+name: Build and Deploy
+
+on:
+  pull_request:
+    branches:
+      - '**'  # Triggers on any branch
+
+jobs:
+  bump_version:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Determine branch type
+        id: branch_check
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          if [[ "$BRANCH_NAME" == *"cicd"* ]]; then
+            echo "VERSION_BUMP=patch" >> $GITHUB_ENV
+          elif [[ "$BRANCH_NAME" == *"minor"* ]]; then
+            echo "VERSION_BUMP=minor" >> $GITHUB_ENV
+          elif [[ "$BRANCH_NAME" == *"major"* ]]; then
+            echo "VERSION_BUMP=major" >> $GITHUB_ENV
+          else
+            echo "Branch name must contain 'patch', 'minor', or 'major'."
+            exit 1
+          fi          
+
+#      - name: Install NPM dependencies
+#        run: npm install --force
+#        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install bump2version
+
+      - name: Bump version
+        run: |
+          git config --global user.email "thomasbs17@yahoo.fr"
+          git config --global user.name "Thomas Bouamoud"
+          
+          cd bootstrap_carousel
+          
+          npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel
+          git add .
+          git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
+          
+          bumpversion $VERSION_BUMP --verbose
+          
+          cd ..
+          git push -f origin HEAD:cicd
+
+  build:
+    needs:
+      - bump_version
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install NPM dependencies
+        run: npm install --force
+        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+
+
+      - name: Build with npm
+        run: |
+          cd ./bootstrap_carousel/streamlit_carousel/carousel/
+          npm run build
+
+      - name: Install build tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+
+      - name: Build distribution files
+        run: |
+          cd bootstrap_carousel
+          python -m build
+
+      - name: Store the distribution packages
+        uses: actions/upload-artifact@v3
+        with:
+          name: bootstrap_carousel
+          path: bootstrap_carousel/dist/
+
+  deploy:
+    needs:
+      - build
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: pypi
+      url: https://pypi.org/project/streamlit-carousel/
+
+    permissions:
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Download all the dists
+        uses: actions/download-artifact@v3
+        with:
+          name: bootstrap_carousel
+          path: dist/
+
+      - name: Publish distribution 📦 to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
