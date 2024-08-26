@@ -44,16 +44,16 @@ jobs:
 
       - name: Bump version
         run: |
+          git config --global user.email "thomasbs17@yahoo.fr"
+          git config --global user.name "Thomas Bouamoud"
+          
           npm version $VERSION_BUMP --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           
           cd bootstrap_carousel
-
-          git config --global user.email "thomasbs17@yahoo.fr"
-          git config --global user.name "Thomas Bouamoud"
-
           bumpversion $VERSION_BUMP --verbose
+          cd ..
           
           git fetch origin cicd
           git rebase origin/cicd
