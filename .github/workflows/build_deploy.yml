@@ -1,8 +1,13 @@
 name: Build and Deploy
 
 on:
-  pull_request:
-    types: [closed]
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Specify the version bump type (patch, minor, major)'
+        required: true
+        default: 'patch'
+        type: string
 
 jobs:
   bump_version:
@@ -17,33 +22,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
-      - name: Check if PR is approved
-        id: check_approval
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # Use the GitHub CLI to get PR reviews
-          PR_REVIEW_STATUS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews -q '.reviews[].state' | grep 'APPROVED')
-          if [ -z "$PR_REVIEW_STATUS" ]; then
-            echo "The pull request is not approved. Exiting."
-            exit 1
-          fi          
-
-      - name: Determine branch type
-        id: branch_check
-        run: |
-          BRANCH_NAME="${{ github.head_ref }}"
-          if [[ "SOURCE_BRANCH" == *"patch"* ]]; then
-            echo "VERSION_BUMP=patch" >> $GITHUB_ENV
-          elif [[ "SOURCE_BRANCH" == *"minor"* ]]; then
-            echo "VERSION_BUMP=minor" >> $GITHUB_ENV
-          elif [[ "SOURCE_BRANCH" == *"major"* ]]; then
-            echo "VERSION_BUMP=major" >> $GITHUB_ENV
-          else
-            echo "Branch name must contain 'patch', 'minor', or 'major'."
-            exit 1
-          fi
 
       - name: Install Python dependencies
         run: |
