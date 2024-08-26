@@ -46,12 +46,12 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install bumpver
+          pip install bump2version
 
       - name: Bump version in package.json
         run: |
           npm version $VERSION_BUMP --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
-          bumpver $VERSION_BUMP
+          bumpversion $VERSION_BUMP --verbose
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           git push origin cicd
