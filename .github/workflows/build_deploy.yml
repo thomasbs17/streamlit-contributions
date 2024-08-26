@@ -54,8 +54,10 @@ jobs:
           npm version $VERSION_BUMP --prefix ./streamlit_carousel/carousel/
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
-
-          git push origin cicd
+          
+          git fetch origin cicd
+          git rebase origin/cicd
+          git push origin HEAD:cicd
 
   build_and_deploy:
 
