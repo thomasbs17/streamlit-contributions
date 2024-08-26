@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Check if PR is approved
         id: check_approval
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # Use the GitHub CLI to get PR reviews
           PR_REVIEW_STATUS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews -q '.reviews[].state' | grep 'APPROVED')
