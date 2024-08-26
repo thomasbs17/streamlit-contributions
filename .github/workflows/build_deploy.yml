@@ -24,7 +24,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install NPM
-        run: npm install
+        run: npm install --force
         working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Install Python dependencies
