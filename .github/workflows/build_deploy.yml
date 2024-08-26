@@ -55,7 +55,7 @@ jobs:
           
           bumpversion $VERSION_BUMP --verbose
           
-          git push
+          git push origin HEAD:cicd
 
 #  build:
 #    needs:
