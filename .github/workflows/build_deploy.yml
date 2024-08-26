@@ -33,7 +33,7 @@ jobs:
             exit 1
           fi          
 
-      - name: Install NPM
+      - name: Install NPM dependencies
         run: npm install --force
         working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
 
@@ -74,9 +74,8 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install NPM
-        run: npm install react-scripts
-        working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
+      - name: Install React Scripts
+        run: npm install react-scripts --force
 
       - name: Build with npm
         run: |
