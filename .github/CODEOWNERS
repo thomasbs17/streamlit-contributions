@@ -1,0 +1,5 @@
+# This is a CODEOWNERS file
+# The person(s) listed here will be automatically requested for reviews on pull requests.
+
+# Assign yourself as the owner for the entire repository
+* @thomasbs17
