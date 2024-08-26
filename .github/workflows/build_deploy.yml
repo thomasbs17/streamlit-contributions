@@ -1,9 +1,9 @@
 name: Build and Deploy
 
 on:
-  pull_request:
+  push:
     branches:
-      - '**'  # Triggers on any branch
+      - master
 
 jobs:
   bump_version:
@@ -69,10 +69,12 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Pull Latest Code
+        run: git pull origin master
+
       - name: Install NPM dependencies
         run: npm install --force
         working-directory: ./bootstrap_carousel/streamlit_carousel/carousel/
-
 
       - name: Build with npm
         run: |
@@ -83,9 +85,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install build twine
-
-      - name: Pull Latest Code
-        run: git pull origin cicd
 
       - name: Build distribution files
         run: |
