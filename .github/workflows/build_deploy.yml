@@ -38,7 +38,7 @@ jobs:
 
       - name: Bump version in package.json
         run: |
-          npm version $VERSION_BUMP --prefix .\bootstrap_carousel\streamlit_carousel\carousel\
+          npm version $VERSION_BUMP --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
           bumpver update --increment $VERSION_BUMP
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
@@ -46,7 +46,7 @@ jobs:
 
       - name: Build with npm
         run: |
-          npm run build --prefix .\bootstrap_carousel\streamlit_carousel\carousel\
+          npm run build --prefix ./bootstrap_carousel/streamlit_carousel/carousel/
 
       - name: Install build tools
         run: |
