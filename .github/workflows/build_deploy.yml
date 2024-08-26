@@ -62,9 +62,7 @@ jobs:
           git add .
           git commit -m "chore: bump version to $VERSION_BUMP [skip ci]"
           
-          git fetch origin cicd
-          git rebase origin/cicd
-          git push origin HEAD:cicd
+          git push
 
       - name: Build with npm
         run: |
